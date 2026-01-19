@@ -156,14 +156,23 @@ function addEntry(){
 }
 
 function render(){
-  const q = searchInput.value.toLowerCase().trim();
+  const qRaw = searchInput.value.trim();
+  const qAr = normalizeArabic(qRaw);
+  const qTr = qRaw.toLowerCase();
+
   list.innerHTML = "";
 
   data
     .filter(e => {
-      const ar = (e.word || "").toLowerCase();
-      const tr = (e.meaning || "").toLowerCase();
-      return ar.includes(q) || tr.includes(q);
+      const arWord = normalizeArabic(e.word || "");
+      const arEx   = normalizeArabic(e.exAr || "");
+      const tr     = (e.meaning || "").toLowerCase();
+
+      return (
+        arWord.includes(qAr) ||
+        arEx.includes(qAr) ||
+        tr.includes(qTr)
+      );
     })
     .forEach(e => {
 
