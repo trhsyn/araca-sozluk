@@ -116,19 +116,21 @@ strong.hl { background:yellow; }
 
 <script>
   
-  function normalizeArabic(text) {
+function normalizeArabic(text) {
   if (!text) return "";
 
   return text
-    // Harekeleri kaldır
-    .replace(/[\u064B-\u065F]/g, "")
-    // Med, üstünlü elif vs.
-    .replace(/[آأإ]/g, "ا")
-    // Ya çeşitleri
+    // Tüm harekeler + dagger alif
+    .replace(/[\u064B-\u065F\u0670]/g, "")
+    // Tatweel
+    .replace(/\u0640/g, "")
+    // Elif çeşitleri
+    .replace(/[آأإٱ]/g, "ا")
+    // Ya
     .replace(/[يى]/g, "ي")
     // Te marbuta
     .replace(/ة/g, "ه")
-    // Hemze
+    // Vav + Ye hemzeli
     .replace(/ؤ/g, "و")
     .replace(/ئ/g, "ي")
     .toLowerCase();
@@ -156,16 +158,16 @@ function addEntry(){
 }
 
 function render(){
-  const qRaw = searchInput.value.trim();
-  const qAr = normalizeArabic(qRaw);
-  const qTr = qRaw.toLowerCase();
+const qRaw = searchInput.value.trim();
+const qAr = normalizeArabic(qRaw);
+const qTr = qRaw.toLowerCase();
 
   list.innerHTML = "";
 
   data
     .filter(e => {
-      const arWord = normalizeArabic(e.word || "");
-      const arEx   = normalizeArabic(e.exAr || "");
+const arWord = normalizeArabic(e.word || "");
+const arEx   = normalizeArabic(e.exAr || "");
       const tr     = (e.meaning || "").toLowerCase();
 
       return (
