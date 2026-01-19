@@ -60,43 +60,54 @@ strong.hl { background:yellow; }
 
 <h1>📘 Arapça–Türkçe Sözlük</h1>
 
+<!-- ARAMA -->
 <div class="form">
-<label>Arapça Kelime</label>
-<input id="word">
-
-<label>Kök</label>
-<input id="root">
-
-<label>Tür</label>
-<select id="pos">
-  <option value="fiil">Fiil</option>
-  <option value="isim">İsim</option>
-  <option value="mastar">Mastar</option>
-  <option value="deyim">Deyim</option>
-</select>
-
-<label>Okunuş</label>
-<input id="trans">
-
-<label>Anlam</label>
-<input id="meaning">
-
-<label>Arapça Örnek</label>
-<textarea id="exAr"></textarea>
-
-<label>Türkçe Örnek</label>
-<textarea id="exTr"></textarea>
-
-<button onclick="addEntry()">➕ Ekle</button>
+  <label>🔍 Arama (Arapça / Türkçe)</label>
+  <input id="search" placeholder="Kelime veya anlam yaz...">
 </div>
 
+<!-- EKLEME FORMU -->
+<div class="form">
+  <label>Arapça Kelime</label>
+  <input id="word">
+
+  <label>Kök</label>
+  <input id="root">
+
+  <label>Tür</label>
+  <select id="pos">
+    <option value="fiil">Fiil</option>
+    <option value="isim">İsim</option>
+    <option value="mastar">Mastar</option>
+    <option value="deyim">Deyim</option>
+  </select>
+
+  <label>Okunuş</label>
+  <input id="trans">
+
+  <label>Anlam</label>
+  <input id="meaning">
+
+  <label>Arapça Örnek</label>
+  <textarea id="exAr"></textarea>
+
+  <label>Türkçe Örnek</label>
+  <textarea id="exTr"></textarea>
+
+  <button onclick="addEntry()">➕ Ekle</button>
+</div>
+
+<!-- LİSTE -->
 <div id="list"></div>
 
 <script>
 let data = JSON.parse(localStorage.getItem("dict") || "[]");
 
+const searchInput = document.getElementById("search");
+
 function addEntry(){
   if(!word.value.trim()) return;
+
   data.unshift({
     word: word.value,
     root: root.value,
@@ -106,13 +117,14 @@ function addEntry(){
     exAr: exAr.value,
     exTr: exTr.value
   });
+
   localStorage.setItem("dict", JSON.stringify(data));
   document.querySelectorAll("input,textarea").forEach(i=>i.value="");
   render();
 }
 
 function render(){
-  const q = searchInput.value.trim().toLowerCase();
+  const q = searchInput.value.toLowerCase().trim();
   list.innerHTML = "";
 
   data
@@ -121,6 +133,7 @@ function render(){
       e.meaning.toLowerCase().includes(q)
     )
     .forEach(e => {
+
       let ex = e.exAr.replace(
         new RegExp(e.word,"g"),
         `<strong class="hl">${e.word}</strong>`
@@ -140,13 +153,12 @@ function render(){
     });
 }
 
-
+searchInput.addEventListener("input", render);
 render();
 </script>
-const searchInput = document.getElementById("search");
-searchInput.addEventListener("input", render);
 
 </body>
+
 </html>
 <div class="form">
   <label>🔍 Arama (Arapça / Türkçe)</label>
