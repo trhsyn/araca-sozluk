@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Arapça–Türkçe Sözlük</title>
+<style>
+body { font-family: system-ui; background:#f5f6f7; padding:20px; }
+h1 { text-align:center; }
+
+.form, .card {
+  background:#fff;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+  box-shadow:0 4px 8px rgba(0,0,0,.05);
+}
+
+label { font-weight:600; display:block; margin-top:8px; }
+input, textarea, select {
+  width:100%;
+  padding:6px;
+  margin-top:3px;
+}
+
+button {
+  margin-top:10px;
+  padding:8px 14px;
+  border:none;
+  background:#2563eb;
+  color:#fff;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.card-title {
+  font-size:20px;
+  font-weight:bold;
+}
+
+.tag {
+  display:inline-block;
+  padding:3px 8px;
+  border-radius:6px;
+  font-size:12px;
+  color:#fff;
+}
+
+.fiil { background:#dc2626; }
+.isim { background:#059669; }
+.mastar { background:#7c3aed; }
+.deyim { background:#d97706; }
+
+.ar { font-size:18px; direction:rtl; margin-top:6px; }
+.ex { background:#f1f5f9; padding:6px; border-radius:6px; }
+strong.hl { background:yellow; }
+</style>
+</head>
+
+<body>
+
+<h1>📘 Arapça–Türkçe Sözlük</h1>
+
+<div class="form">
+<label>Arapça Kelime</label>
+<input id="word">
+
+<label>Kök</label>
+<input id="root">
+
+<label>Tür</label>
+<select id="pos">
+  <option value="fiil">Fiil</option>
+  <option value="isim">İsim</option>
+  <option value="mastar">Mastar</option>
+  <option value="deyim">Deyim</option>
+</select>
+
+<label>Okunuş</label>
+<input id="trans">
+
+<label>Anlam</label>
+<input id="meaning">
+
+<label>Arapça Örnek</label>
+<textarea id="exAr"></textarea>
+
+<label>Türkçe Örnek</label>
+<textarea id="exTr"></textarea>
+
+<button onclick="addEntry()">➕ Ekle</button>
+</div>
+
+<div id="list"></div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("dict") || "[]");
+
+function addEntry(){
+  if(!word.value.trim()) return;
+  data.unshift({
+    word: word.value,
+    root: root.value,
+    pos: pos.value,
+    trans: trans.value,
+    meaning: meaning.value,
+    exAr: exAr.value,
+    exTr: exTr.value
+  });
+  localStorage.setItem("dict", JSON.stringify(data));
+  document.querySelectorAll("input,textarea").forEach(i=>i.value="");
+  render();
+}
+
+function render(){
+  list.innerHTML="";
+  data.forEach(e=>{
+    let ex = e.exAr.replace(
+      new RegExp(e.word,"g"),
+      `<strong class="hl">${e.word}</strong>`
+    );
+    list.innerHTML += `
+    <div class="card">
+      <div class="card-title">${e.word}
+        <span class="tag ${e.pos}">${e.pos}</span>
+      </div>
+      <div><b>Kök:</b> ${e.root}</div>
+      <div><b>Okunuş:</b> ${e.trans}</div>
+      <div><b>Anlam:</b> ${e.meaning}</div>
+      <div class="ar ex">${ex}</div>
+      <div class="ex">${e.exTr}</div>
+    </div>`;
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>
