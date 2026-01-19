@@ -115,6 +115,24 @@ strong.hl { background:yellow; }
 <div id="list"></div>
 
 <script>
+  
+  function normalizeArabic(text) {
+  if (!text) return "";
+
+  return text
+    // Harekeleri kaldır
+    .replace(/[\u064B-\u065F]/g, "")
+    // Med, üstünlü elif vs.
+    .replace(/[آأإ]/g, "ا")
+    // Ya çeşitleri
+    .replace(/[يى]/g, "ي")
+    // Te marbuta
+    .replace(/ة/g, "ه")
+    // Hemze
+    .replace(/ؤ/g, "و")
+    .replace(/ئ/g, "ي")
+    .toLowerCase();
+}
 let data = JSON.parse(localStorage.getItem("dict") || "[]");
 
 const searchInput = document.getElementById("search");
