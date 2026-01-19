@@ -120,27 +120,26 @@ function normalizeArabic(text) {
   if (!text) return "";
 
   return text
-    // Tüm harekeler + dagger alif
-    .replace(/[\u064B-\u065F\u0670]/g, "")
-    // Tatweel
-    .replace(/\u0640/g, "")
-    // Elif çeşitleri
+    .replace(/[\u064B-\u065F\u0670]/g, "") // tüm harekeler
+    .replace(/\u0640/g, "")               // tatweel
     .replace(/[آأإٱ]/g, "ا")
-    // Ya
     .replace(/[يى]/g, "ي")
-    // Te marbuta
     .replace(/ة/g, "ه")
-    // Vav + Ye hemzeli
     .replace(/ؤ/g, "و")
     .replace(/ئ/g, "ي")
-    .toLowerCase();
+    .trim();
 }
+
 let data = JSON.parse(localStorage.getItem("dict") || "[]");
 
 const searchInput = document.getElementById("search");
 
 function addEntry(){
   if(!word.value.trim()) return;
+
+  const searchAr =
+    normalizeArabic(word.value) + " " +
+    normalizeArabic(exAr.value);
 
   data.unshift({
     word: word.value,
@@ -149,33 +148,26 @@ function addEntry(){
     trans: trans.value,
     meaning: meaning.value,
     exAr: exAr.value,
-    exTr: exTr.value
+    exTr: exTr.value,
+    searchAr: searchAr
   });
 
   localStorage.setItem("dict", JSON.stringify(data));
   document.querySelectorAll("input,textarea").forEach(i=>i.value="");
   render();
 }
-
 function render(){
-const qRaw = searchInput.value.trim();
-const qAr = normalizeArabic(qRaw);
-const qTr = qRaw.toLowerCase();
+  const q = searchInput.value.trim();
+  const qAr = normalizeArabic(q);
+  const qTr = q.toLowerCase();
 
   list.innerHTML = "";
 
   data
-    .filter(e => {
-const arWord = normalizeArabic(e.word || "");
-const arEx   = normalizeArabic(e.exAr || "");
-      const tr     = (e.meaning || "").toLowerCase();
-
-      return (
-        arWord.includes(qAr) ||
-        arEx.includes(qAr) ||
-        tr.includes(qTr)
-      );
-    })
+    .filter(e =>
+      (e.searchAr || "").includes(qAr) ||
+      (e.meaning || "").toLowerCase().includes(qTr)
+    )
     .forEach(e => {
 
       let ex = (e.exAr || "").replace(
@@ -185,14 +177,14 @@ const arEx   = normalizeArabic(e.exAr || "");
 
       list.innerHTML += `
       <div class="card">
-        <div class="card-title">${e.word || ""}
+        <div class="card-title">${e.word}
           <span class="tag ${e.pos}">${e.pos}</span>
         </div>
-        <div><b>Kök:</b> ${e.root || ""}</div>
-        <div><b>Okunuş:</b> ${e.trans || ""}</div>
-        <div><b>Anlam:</b> ${e.meaning || ""}</div>
+        <div><b>Kök:</b> ${e.root}</div>
+        <div><b>Okunuş:</b> ${e.trans}</div>
+        <div><b>Anlam:</b> ${e.meaning}</div>
         <div class="ar ex">${ex}</div>
-        <div class="ex">${e.exTr || ""}</div>
+        <div class="ex">${e.exTr}</div>
       </div>`;
     });
 }
