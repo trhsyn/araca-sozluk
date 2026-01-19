@@ -142,31 +142,31 @@ function render(){
   list.innerHTML = "";
 
   data
-    .filter(e =>
-      e.word.toLowerCase().includes(q) ||
-      e.meaning.toLowerCase().includes(q)
-    )
+    .filter(e => {
+      const ar = (e.word || "").toLowerCase();
+      const tr = (e.meaning || "").toLowerCase();
+      return ar.includes(q) || tr.includes(q);
+    })
     .forEach(e => {
 
-      let ex = e.exAr.replace(
+      let ex = (e.exAr || "").replace(
         new RegExp(e.word,"g"),
         `<strong class="hl">${e.word}</strong>`
       );
 
       list.innerHTML += `
       <div class="card">
-        <div class="card-title">${e.word}
+        <div class="card-title">${e.word || ""}
           <span class="tag ${e.pos}">${e.pos}</span>
         </div>
-        <div><b>Kök:</b> ${e.root}</div>
-        <div><b>Okunuş:</b> ${e.trans}</div>
-        <div><b>Anlam:</b> ${e.meaning}</div>
+        <div><b>Kök:</b> ${e.root || ""}</div>
+        <div><b>Okunuş:</b> ${e.trans || ""}</div>
+        <div><b>Anlam:</b> ${e.meaning || ""}</div>
         <div class="ar ex">${ex}</div>
-        <div class="ex">${e.exTr}</div>
+        <div class="ex">${e.exTr || ""}</div>
       </div>`;
     });
 }
-
 searchInput.addEventListener("input", render);
 render();
 </script>
