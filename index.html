@@ -112,28 +112,43 @@ function addEntry(){
 }
 
 function render(){
-  list.innerHTML="";
-  data.forEach(e=>{
-    let ex = e.exAr.replace(
-      new RegExp(e.word,"g"),
-      `<strong class="hl">${e.word}</strong>`
-    );
-    list.innerHTML += `
-    <div class="card">
-      <div class="card-title">${e.word}
-        <span class="tag ${e.pos}">${e.pos}</span>
-      </div>
-      <div><b>Kök:</b> ${e.root}</div>
-      <div><b>Okunuş:</b> ${e.trans}</div>
-      <div><b>Anlam:</b> ${e.meaning}</div>
-      <div class="ar ex">${ex}</div>
-      <div class="ex">${e.exTr}</div>
-    </div>`;
-  });
+  const q = searchInput.value.trim().toLowerCase();
+  list.innerHTML = "";
+
+  data
+    .filter(e =>
+      e.word.toLowerCase().includes(q) ||
+      e.meaning.toLowerCase().includes(q)
+    )
+    .forEach(e => {
+      let ex = e.exAr.replace(
+        new RegExp(e.word,"g"),
+        `<strong class="hl">${e.word}</strong>`
+      );
+
+      list.innerHTML += `
+      <div class="card">
+        <div class="card-title">${e.word}
+          <span class="tag ${e.pos}">${e.pos}</span>
+        </div>
+        <div><b>Kök:</b> ${e.root}</div>
+        <div><b>Okunuş:</b> ${e.trans}</div>
+        <div><b>Anlam:</b> ${e.meaning}</div>
+        <div class="ar ex">${ex}</div>
+        <div class="ex">${e.exTr}</div>
+      </div>`;
+    });
 }
+
 
 render();
 </script>
+const searchInput = document.getElementById("search");
+searchInput.addEventListener("input", render);
 
 </body>
 </html>
+<div class="form">
+  <label>🔍 Arama (Arapça / Türkçe)</label>
+  <input id="search" placeholder="Kelime veya anlam yaz...">
+</div>
